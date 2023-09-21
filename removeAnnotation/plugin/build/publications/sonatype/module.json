@@ -1,0 +1,96 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.rover12421.android.plugins.removeAnnotation",
+    "module": "plugin",
+    "version": "8.0.1",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.0"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk8",
+          "version": {
+            "requires": "1.8.10"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "plugin-8.0.1.jar",
+          "url": "plugin-8.0.1.jar",
+          "size": 14375,
+          "sha512": "0228e3ca3dac50db6638c0e513012973e7218f4e8e0368554ee0e75dc27663aac9aec1e4391612150f4ae0ac25861911d815d38d56ca7eb1b30f7b8758f46ebf",
+          "sha256": "2e75b250c984933666b4b163cda0ffaf40ae75eabfe6f7491ddec20106d48bde",
+          "sha1": "472721493a921a280e03550d666389793e1238eb",
+          "md5": "1b848d3fd335038959047b7728709ac4"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.ow2.asm",
+          "module": "asm",
+          "version": {
+            "requires": "9.5"
+          }
+        },
+        {
+          "group": "org.ow2.asm",
+          "module": "asm-util",
+          "version": {
+            "requires": "9.5"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk8",
+          "version": {
+            "requires": "1.8.10"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "plugin-8.0.1.jar",
+          "url": "plugin-8.0.1.jar",
+          "size": 14375,
+          "sha512": "0228e3ca3dac50db6638c0e513012973e7218f4e8e0368554ee0e75dc27663aac9aec1e4391612150f4ae0ac25861911d815d38d56ca7eb1b30f7b8758f46ebf",
+          "sha256": "2e75b250c984933666b4b163cda0ffaf40ae75eabfe6f7491ddec20106d48bde",
+          "sha1": "472721493a921a280e03550d666389793e1238eb",
+          "md5": "1b848d3fd335038959047b7728709ac4"
+        }
+      ]
+    }
+  ]
+}
