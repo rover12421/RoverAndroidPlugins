@@ -1,4 +1,4 @@
-package com.rover12421.android.plugins.removeAnnotation.plugin
+package com.rover12421.android.plugins.namehash.plugin
 
 import com.android.build.api.instrumentation.FramesComputationMode
 import com.android.build.api.instrumentation.InstrumentationScope
@@ -7,7 +7,12 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 class PluginMain : Plugin<Project> {
-    private val pluginName = "removeAnnotation"
+    companion object {
+        const val pluginName = "nameHash"
+        var prop: PluginProp = PluginProp()
+        var first = true
+    }
+
     override fun apply(project: Project) {
         val version = javaClass.`package`.implementationVersion
         println("plugin - $pluginName($version)")
@@ -18,28 +23,27 @@ class PluginMain : Plugin<Project> {
 
         project.extensions.create(pluginName, PluginProp::class.java)
 
+        project.dependencies.add("implementation", "com.rover12421.android.plugins.namehash:core:$version")
+
         appExtension.onVariants { variant ->
-            val prop: PluginProp = project.extensions.findByType(PluginProp::class.java)!!
+            if (first) {
+                prop = project.extensions.findByType(PluginProp::class.java)!!
+                if (prop.debug) {
+                    println("Using hash algorithm: ${prop.hash.algorithm}")
+                }
+                first = false
+            }
+
             val scope = if (prop.allProject) {
                 InstrumentationScope.ALL
             } else {
                 InstrumentationScope.PROJECT
             }
 
-            if (prop.annotations.isEmpty()) {
-                if (prop.debug) {
-                    println("remove annotations is empty!")
-                }
-                return@onVariants
-            }
             variant.instrumentation.apply {
                 transformClassesWith(
                     PluginTransform::class.java, scope
-                ) {
-                    it.filters.set(prop.filter)
-                    it.annotations.set(prop.annotations)
-                    it.debug.set(prop.debug)
-                }
+                ) {}
 
                 setAsmFramesComputationMode(FramesComputationMode.COPY_FRAMES)
             }

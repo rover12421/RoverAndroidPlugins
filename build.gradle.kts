@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import java.net.URI
 
 buildscript {
@@ -9,7 +10,9 @@ buildscript {
     }
     dependencies {
         val removeAnnotationPluginVer = project.property("RemoveAnnotationPluginVer")
+        val nameHashPluginVer = project.property("NameHashPluginVer")
         classpath("com.rover12421.android.plugins.removeAnnotation:plugin:$removeAnnotationPluginVer")
+        classpath("com.rover12421.android.plugins.namehash:plugin:$nameHashPluginVer")
     }
 }
 
@@ -108,15 +111,8 @@ subprojects {
                         }
                     }
 
-                    configurations.named("compileOnly") {
-                        dependencies.add(project.dependencies.gradleApi())
-                        dependencies.add(project.dependencies.create("com.android.tools.build:gradle:${VersionInfo.agp}"))
-                    }
-
-                    configurations.named("implementation") {
-                        dependencies.add(project.dependencies.create("org.ow2.asm:asm:${VersionInfo.asm}"))
-                        dependencies.add(project.dependencies.create("org.ow2.asm:asm-util:${VersionInfo.asm}"))
-                    }
+                    project.dependencies.add("implementation", "org.ow2.asm:asm:${VersionInfo.asm}")
+                    project.dependencies.add("compileOnly", "com.android.tools.build:gradle:${VersionInfo.agp}")
                 }
             }
 
@@ -133,6 +129,13 @@ subprojects {
 
             tasks.withType<Jar>().configureEach {
                 exclude("**/*.kotlin_module")
+
+                manifest {
+                    attributes(
+                        "Implementation-Version" to version,
+                        "Version" to version,
+                    )
+                }
             }
 
             val sourceSets = project.extensions.findByName("sourceSets") as SourceSetContainer
@@ -144,7 +147,7 @@ subprojects {
                 from(sourceSets["main"].allSource)
             }
 
-            tasks.register("generateJavadoc", Javadoc::class) {
+            val generateJavadoc = tasks.register("generateJavadoc", Javadoc::class) {
                 source = sourceSets.getByName("main").allJava
                 setDestinationDir(file("$buildDir/docs/javadoc"))
             }
@@ -152,7 +155,7 @@ subprojects {
             val javadocJar = tasks.register("javadocJar", Jar::class) {
                 group = "publishing"
                 archiveClassifier.set("javadoc")
-                from(tasks.named("generateJavadoc"))
+                from(generateJavadoc)
             }
 
             val sonatypeUsername = project.property("sonatypeUsername").toString()

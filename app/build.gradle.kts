@@ -1,8 +1,11 @@
+import com.rover12421.android.plugins.namehash.plugin.HashAlgorithm
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 
     id("rover.android.removeAnnotation")
+    id("rover.android.namehash")
 }
 
 android {
@@ -112,4 +115,17 @@ removeAnnotation {
     debug = true
     allProject = false
     annotations.add("kotlin.Metadata")
+}
+
+nameHash {
+    debug = true
+    hash.algorithm = object: HashAlgorithm {
+        override fun hash(data: String, param: Map<String, Any>): String {
+            return data.reversed()
+        }
+
+        override fun toString(): String {
+            return "Temp Hash Algorithm reversed"
+        }
+    }
 }

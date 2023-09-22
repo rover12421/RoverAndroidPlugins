@@ -20,12 +20,25 @@ class PluginClassVisitor(nextClassVisitor: ClassVisitor, val param: PluginParam)
 
         return if (find) {
             if (debug) {
-                println("remove annotation : $descriptor")
+                println("remove annotation : $descriptor in $clsName")
             }
             true
         } else {
             false
         }
+    }
+
+    private var clsName: String = ""
+    override fun visit(
+        version: Int,
+        access: Int,
+        name: String,
+        signature: String?,
+        superName: String?,
+        interfaces: Array<out String>?
+    ) {
+        clsName = name
+        super.visit(version, access, name, signature, superName, interfaces)
     }
 
     override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {

@@ -11,8 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.rover12421.android.plugins.app.ui.theme.RoverAndroidPluginsTheme
+import com.rover12421.android.plugins.namehash.core.HashName
 
 class MainActivity : ComponentActivity() {
+
+    @HashName("onCreate", "TestOncreate")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -29,6 +32,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@HashName
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
@@ -37,6 +41,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     )
 }
 
+@HashName("GGGGGGGGGGGGG")
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
