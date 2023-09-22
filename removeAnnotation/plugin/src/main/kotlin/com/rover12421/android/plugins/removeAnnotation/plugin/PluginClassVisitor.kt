@@ -2,13 +2,14 @@ package com.rover12421.android.plugins.removeAnnotation.plugin
 
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.FieldVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 
 class PluginClassVisitor(nextClassVisitor: ClassVisitor, val param: PluginParam)
     : ClassVisitor(Opcodes.ASM9, nextClassVisitor) {
 
-    val debug = param.debug.get()
+    private val debug = param.debug.get()
 
     fun isRemove(descriptor: String): Boolean {
 //        println("visitAnnotation($debug): $descriptor")
@@ -36,7 +37,7 @@ class PluginClassVisitor(nextClassVisitor: ClassVisitor, val param: PluginParam)
 
     override fun visitMethod(
         access: Int,
-        name: String?,
+        name: String,
         descriptor: String?,
         signature: String?,
         exceptions: Array<out String>?
@@ -44,6 +45,24 @@ class PluginClassVisitor(nextClassVisitor: ClassVisitor, val param: PluginParam)
 //        println("visitMethod($debug): $name $descriptor $signature")
         val methodVisitor = super.visitMethod(access, name, descriptor, signature, exceptions)
         return object: MethodVisitor(Opcodes.ASM9, methodVisitor) {
+            override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {
+                if (isRemove(descriptor)) {
+                    return null
+                }
+                return super.visitAnnotation(descriptor, visible)
+            }
+        }
+    }
+
+    override fun visitField(
+        access: Int,
+        name: String,
+        descriptor: String?,
+        signature: String?,
+        value: Any?
+    ): FieldVisitor {
+        val visitField = super.visitField(access, name, descriptor, signature, value)
+        return object: FieldVisitor(Opcodes.ASM9, visitField) {
             override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {
                 if (isRemove(descriptor)) {
                     return null
