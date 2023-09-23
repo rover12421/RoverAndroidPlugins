@@ -7,7 +7,42 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 class PluginMain : Plugin<Project> {
-    private val pluginName = "removeAnnotation"
+    companion object {
+        const val pluginName = "removeAnnotation"
+        var prop: PluginProp = PluginProp()
+        val filterRegex: MutableList<Regex> = mutableListOf()
+
+        fun isMatchClass(className: String): Boolean {
+            val filter = prop.filter
+            if (filter.isEmpty()) {
+                return true
+            }
+            val match = if (prop.filterRegex) {
+                filterRegex.firstOrNull {
+                    it.matches(className)
+                }
+            } else {
+                filter.firstOrNull {
+                    className.startsWith(it)
+                }
+            } != null
+
+            if (match && prop.debug) {
+                println("[$pluginName] match $className")
+            }
+            return match
+        }
+    }
+
+    private fun initProp(project: Project) {
+        prop = project.extensions.findByType(PluginProp::class.java)!!
+        if (prop.filterRegex) {
+            prop.filter.mapTo(filterRegex) {
+                it.toRegex()
+            }
+        }
+    }
+
     override fun apply(project: Project) {
         val version = javaClass.`package`.implementationVersion
         println("plugin - $pluginName($version)")
@@ -19,7 +54,7 @@ class PluginMain : Plugin<Project> {
         project.extensions.create(pluginName, PluginProp::class.java)
 
         appExtension.onVariants { variant ->
-            val prop: PluginProp = project.extensions.findByType(PluginProp::class.java)!!
+            initProp(project)
             val scope = if (prop.allProject) {
                 InstrumentationScope.ALL
             } else {
@@ -35,11 +70,7 @@ class PluginMain : Plugin<Project> {
             variant.instrumentation.apply {
                 transformClassesWith(
                     PluginTransform::class.java, scope
-                ) {
-                    it.filters.set(prop.filter)
-                    it.annotations.set(prop.annotations)
-                    it.debug.set(prop.debug)
-                }
+                ) {}
 
                 setAsmFramesComputationMode(FramesComputationMode.COPY_FRAMES)
             }

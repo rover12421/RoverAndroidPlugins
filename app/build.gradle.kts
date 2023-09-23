@@ -4,8 +4,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 
-    id("rover.android.removeAnnotation")
     id("rover.android.namehash")
+    id("rover.android.removeAnnotation")
 }
 
 android {
@@ -72,24 +72,16 @@ android {
         checkReleaseBuilds = false
     }
 
-    tasks.register("testRemoveAnnotation") {
+    tasks.register("publishToLocal") {
         group = "test"
 
-        val publishTask = project(":removeAnnotation:plugin").tasks.findByPath("publishToMavenLocal")
-        dependsOn(publishTask)
-
-        val cleanTask = tasks.findByPath("clean")!!
-        dependsOn(cleanTask)
-        cleanTask.mustRunAfter(publishTask)
-
-        val preBuild = tasks.findByPath("preBuild")!!
-        dependsOn(preBuild)
-        preBuild.mustRunAfter(cleanTask)
-
-        val assembleTask = tasks.findByPath("assembleRelease")!!
-        dependsOn(assembleTask)
-        assembleTask.mustRunAfter(cleanTask)
-        assembleTask.mustRunAfter(preBuild)
+        rootProject.allprojects.forEach { pj ->
+            val publishTask = pj.tasks.findByPath("publishToMavenLocal")
+            if (publishTask != null) {
+                dependsOn(publishTask)
+                mustRunAfter(publishTask)
+            }
+        }
     }
 }
 
@@ -113,19 +105,22 @@ dependencies {
 
 removeAnnotation {
     debug = true
-    allProject = false
+    allProject = true
     annotations.add("kotlin.Metadata")
+    filter.add("com.rover12421")
 }
 
 nameHash {
     debug = true
-    hash.algorithm = object: HashAlgorithm {
-        override fun hash(data: String, param: Map<String, Any>): String {
-            return data.reversed()
-        }
+//    hash.algorithm = object: HashAlgorithm {
+//        override fun algorithmName(): String {
+//            return "Reversed"
+//        }
+//
+//        override fun hash(data: String, param: Map<String, Any>): String {
+//            return data.reversed()
+//        }
+//    }
 
-        override fun toString(): String {
-            return "Temp Hash Algorithm reversed"
-        }
-    }
+    hash.algorithm = HashAlgorithm.MurmurHash32
 }

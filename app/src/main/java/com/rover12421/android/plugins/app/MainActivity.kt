@@ -15,7 +15,7 @@ import com.rover12421.android.plugins.namehash.core.HashName
 
 class MainActivity : ComponentActivity() {
 
-    @HashName("onCreate", "TestOncreate")
+    @HashName("onCreate", "TestOncreate", "mService", "mTargetSdkVersion")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

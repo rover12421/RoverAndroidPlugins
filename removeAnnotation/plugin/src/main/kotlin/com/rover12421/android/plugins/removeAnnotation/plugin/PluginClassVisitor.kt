@@ -6,15 +6,15 @@ import org.objectweb.asm.FieldVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 
-class PluginClassVisitor(nextClassVisitor: ClassVisitor, val param: PluginParam)
+class PluginClassVisitor(nextClassVisitor: ClassVisitor, private val prop: PluginProp)
     : ClassVisitor(Opcodes.ASM9, nextClassVisitor) {
 
-    private val debug = param.debug.get()
+    private val debug = prop.debug
 
     fun isRemove(descriptor: String): Boolean {
 //        println("visitAnnotation($debug): $descriptor")
         val desc = descriptor.removeSurrounding("L", ";").replace("/", ".")
-        val find = param.annotations.get().firstOrNull {
+        val find = prop.annotations.firstOrNull {
             it == desc
         } != null
 

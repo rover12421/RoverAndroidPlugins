@@ -16,18 +16,6 @@ abstract class PluginTransform : AsmClassVisitorFactory<InstrumentationParameter
     }
 
     override fun isInstrumentable(classData: ClassData): Boolean {
-        val className = classData.className
-//        println("isInstrumentable $className")
-        val filter = PluginMain.prop.filter
-        if (filter.isEmpty()) {
-            return true
-        }
-        val match =  filter.firstOrNull {
-            it.toRegex().matches(className)
-        } != null
-        if (match && PluginMain.prop.debug) {
-            println("[match] $className")
-        }
-        return match
+        return PluginMain.isMatchClass(classData.className)
     }
 }

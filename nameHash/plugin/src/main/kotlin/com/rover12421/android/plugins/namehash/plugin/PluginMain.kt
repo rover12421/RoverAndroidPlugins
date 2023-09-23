@@ -10,7 +10,37 @@ class PluginMain : Plugin<Project> {
     companion object {
         const val pluginName = "nameHash"
         var prop: PluginProp = PluginProp()
-        var first = true
+        val filterRegex: MutableList<Regex> = mutableListOf()
+
+        fun isMatchClass(className: String): Boolean {
+            val filter = prop.filter
+            if (filter.isEmpty()) {
+                return true
+            }
+            val match = if (prop.filterRegex) {
+                filterRegex.firstOrNull {
+                    it.matches(className)
+                }
+            } else {
+                filter.firstOrNull {
+                    className.startsWith(it)
+                }
+            } != null
+
+            if (match && prop.debug) {
+                println("[$pluginName] match $className")
+            }
+            return match
+        }
+    }
+
+    private fun initProp(project: Project) {
+        prop = project.extensions.findByType(PluginProp::class.java)!!
+        if (prop.filterRegex) {
+            prop.filter.mapTo(filterRegex) {
+                it.toRegex()
+            }
+        }
     }
 
     override fun apply(project: Project) {
@@ -26,12 +56,9 @@ class PluginMain : Plugin<Project> {
         project.dependencies.add("implementation", "com.rover12421.android.plugins.namehash:core:$version")
 
         appExtension.onVariants { variant ->
-            if (first) {
-                prop = project.extensions.findByType(PluginProp::class.java)!!
-                if (prop.debug) {
-                    println("Using hash algorithm: ${prop.hash.algorithm}")
-                }
-                first = false
+            initProp(project)
+            if (prop.debug) {
+                println("Using hash algorithm: ${prop.hash.algorithm.algorithmName()}")
             }
 
             val scope = if (prop.allProject) {
