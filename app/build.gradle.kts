@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 import com.rover12421.android.plugins.namehash.plugin.HashAlgorithm
 
 plugins {
