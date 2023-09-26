@@ -8,10 +8,20 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        val removeAnnotationPluginVer = project.property("RemoveAnnotationPluginVer")
-        val nameHashPluginVer = project.property("NameHashPluginVer")
+        val removeAnnotationPluginVer = project.property("removeAnnotationPluginVer")
         classpath("com.rover12421.android.plugins.removeAnnotation:plugin:$removeAnnotationPluginVer")
+
+        val nameHashPluginVer = project.property("nameHashPluginVer")
         classpath("com.rover12421.android.plugins.namehash:plugin:$nameHashPluginVer")
+
+        val dependencyToMavenLocalVer = project.property("dependencyToMavenLocalVer")
+        classpath("com.rover12421.gradle.plugins.dependencyToMavenLocal:plugin:$dependencyToMavenLocalVer")
+//        val shrinkwrap = "3.1.4"
+//        classpath("org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-spi:${shrinkwrap}")
+//        classpath("org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-spi-maven:${shrinkwrap}")
+//        classpath("org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven:${shrinkwrap}")
+//        classpath("org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-api-maven:${shrinkwrap}")
+//        classpath("org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-api:${shrinkwrap}")
     }
 }
 
@@ -76,7 +86,7 @@ subprojects {
     afterEvaluate {
         val configFile = project.file("config.properties")
         if (configFile.exists()) {
-//            println("project: ${project.name}")
+            println("project: ${project.name}")
 //            println("load config $configFile")
             loadProperties(configFile, project)
 
@@ -110,8 +120,8 @@ subprojects {
                         }
                     }
 
-                    project.dependencies.add("implementation", "org.ow2.asm:asm:${VersionInfo.asm}")
-                    project.dependencies.add("compileOnly", "com.android.tools.build:gradle:${VersionInfo.agp}")
+                    project.dependencies.add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, "org.ow2.asm:asm:${VersionInfo.asm}")
+                    project.dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME, "com.android.tools.build:gradle:${VersionInfo.agp}")
                 }
             }
 

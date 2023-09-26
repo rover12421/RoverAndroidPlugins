@@ -8,6 +8,7 @@ plugins {
 
     id("rover.android.namehash")
     id("rover.android.removeAnnotation")
+    id("rover.gradle.dependencyToMavenLocal")
 }
 
 android {
@@ -125,4 +126,8 @@ nameHash {
 //    }
 
     hash.algorithm = HashAlgorithm.MurmurHash32
+}
+
+dependencyToMavenLocal {
+    debug = true
 }

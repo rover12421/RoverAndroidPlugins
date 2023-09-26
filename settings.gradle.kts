@@ -23,3 +23,4 @@ rootProject.name = "RoverAndroidPlugins"
 include(":app")
 include(":removeAnnotation:plugin")
 include(":nameHash:core", ":nameHash:plugin")
+include(":dependencyToMavenLocal:plugin")

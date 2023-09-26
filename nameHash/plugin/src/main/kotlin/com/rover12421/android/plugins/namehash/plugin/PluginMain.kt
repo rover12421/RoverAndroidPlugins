@@ -5,6 +5,7 @@ import com.android.build.api.instrumentation.InstrumentationScope
 import com.android.build.api.variant.AndroidComponentsExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPlugin
 
 class PluginMain : Plugin<Project> {
     companion object {
@@ -53,7 +54,7 @@ class PluginMain : Plugin<Project> {
 
         project.extensions.create(pluginName, PluginProp::class.java)
 
-        project.dependencies.add("implementation", "com.rover12421.android.plugins.namehash:core:$version")
+        project.dependencies.add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, "com.rover12421.android.plugins.namehash:core:$version")
 
         appExtension.onVariants { variant ->
             initProp(project)
