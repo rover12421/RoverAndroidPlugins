@@ -14,6 +14,7 @@ import org.eclipse.aether.repository.RemoteRepository
 import org.eclipse.aether.resolution.ArtifactDescriptorResult
 import org.eclipse.aether.resolution.DependencyRequest
 import org.eclipse.aether.supplier.RepositorySystemSupplier
+import java.io.File
 
 
 class MavenLoader {
@@ -39,15 +40,17 @@ class MavenLoader {
          * sonatype               https://oss.sonatype.org/service/local/repositories/releases/content/
          * jitpack                https://jitpack.io
          */
-        addRepo("huaweicloud", "https://mirrors.huaweicloud.com/repository/maven/")
+        val localRepoUrl = System.getProperty("maven.repo.local", System.getProperty("user.home") + "/.m2/repository")
+        val localRepository = LocalRepository(localRepoUrl)
+        session.localRepositoryManager = system.newLocalRepositoryManager(session, localRepository)
+
+        addRepo("mavenLocal", File(localRepoUrl).toURI().toURL().toString())
+        addRepo("huaweiCloud", "https://mirrors.huaweicloud.com/repository/maven/")
         addRepo("aliyun", "https://maven.aliyun.com/repository/public")
         addRepo("aliyun gradle plugin", "https://maven.aliyun.com/repository/gradle-plugin")
         addRepo("sonatype", "https://oss.sonatype.org/service/local/repositories/releases/content/")
         addRepo("jitpack", "https://jitpack.io")
 
-        val localRepoUrl = System.getProperty("maven.repo.local", System.getProperty("user.home") + "/.m2/repository")
-        val localRepository = LocalRepository(localRepoUrl)
-        session.localRepositoryManager = system.newLocalRepositoryManager(session, localRepository)
 
         /**
          * 默认的版本适配会遇到异常
@@ -74,7 +77,12 @@ class MavenLoader {
                     }
 
                     if (packaging == "pom") {
-                        classifier = "all"
+                        if (model.dependencyManagement == null) {
+                            classifier = "all"
+                        } else {
+                            extension = "pom"
+                            model.dependencies.addAll(model.dependencyManagement.dependencies)
+                        }
                     }
 
                     result.artifact = DefaultArtifact(
@@ -85,7 +93,9 @@ class MavenLoader {
                         /* version = */ resultArtifact.version
                     )
 
-                    println("new result artifact: ${result.artifact}")
+                    if (PluginMain.prop.debug) {
+                        println("new result artifact: ${result.artifact}")
+                    }
                 }
                 super.populateResult(session, result, model)
             }
