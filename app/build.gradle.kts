@@ -128,6 +128,6 @@ nameHash {
     hash.algorithm = HashAlgorithm.MurmurHash32
 }
 
-dependencyToMavenLocal {
-    debug = true
-}
+//dependencyToMavenLocal {
+//    debug = true
+//}

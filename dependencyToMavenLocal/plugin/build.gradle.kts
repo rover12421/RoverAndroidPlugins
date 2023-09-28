@@ -1,3 +1,3 @@
 dependencies {
-    implementation("org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven:3.1.4")
+    implementation("org.apache.maven.resolver:maven-resolver-supplier:1.9.16")
 }

@@ -59,11 +59,13 @@ class PluginMain : Plugin<Project> {
             override fun projectsEvaluated(gradle: Gradle) {
                 initProp(project)
 
+                println("!!!!!!!!!!!! projectsEvaluated ${prop.debug}")
+
                 val mavenLoader = MavenLoader()
                 prop.repo.forEach { (name, url) ->
-                    if (prop.debug) {
-                        println("add Repo [$name] $url")
-                    }
+//                    if (prop.debug) {
+//                        println("add Repo [$name] $url")
+//                    }
                     mavenLoader.addRepo(name, url)
                 }
 
@@ -74,9 +76,9 @@ class PluginMain : Plugin<Project> {
 
                     try {
                         pj.repositories.apply {
-                            forEach { repo ->
-                                println("[${pj.name}]repo - ${repo.name} : $repo")
-                            }
+//                            forEach { repo ->
+//                                println("[${pj.name}]repo - ${repo.name} : $repo")
+//                            }
                             if (size== 0 || get(0).name != "MavenLocal") {
                                 // 在最前面添加 mavenLocal
                                 add(0, mavenLocal())
@@ -86,33 +88,48 @@ class PluginMain : Plugin<Project> {
                     } catch (_: Throwable){}
 
                     try {
-                        pj.configurations.named("compileClasspath").get().apply {
-                            allDependencies.forEach { dependency ->
+//                        pj.configurations.named("compileClasspath").get().apply {
+                        val cacahe: MutableSet<String> = mutableSetOf()
+                        pj.configurations.asMap.forEach { (name, configuration) ->
+//                            println("[configurations] $name >> $configuration")
+                            configuration.allDependencies.forEach loopDep@{ dependency ->
                                 val group = dependency.group
-                                val name = dependency.name
+                                val aid = dependency.name
                                 val ver = dependency.version
-                                val dep = "$group:$name:$ver"
-//                                if (prop.debug) {
-//                                    println("[$pluginName] check dep : $dep")
-//                                }
-                                if (!group.isNullOrBlank() && !name.isNullOrBlank() && !ver.isNullOrBlank()) {
+                                val dep = "$group:$aid:$ver"
+                                if (!cacahe.add(dep)) {
+                                    return@loopDep
+                                }
+                                if (!group.isNullOrBlank()
+                                    && !aid.isNullOrBlank()
+                                    && !ver.isNullOrBlank()
+                                    && ver != "unspecified"
+                                    && group != "unspecified"
+                                    && aid != "unspecified"
+                                    ) {
                                     if (!isFilterDep(dep)) {
                                         if (prop.debug) {
-                                            println("[$pluginName] add dep : $dep")
+                                            println("[$pluginName] add dependency($name) : $dep")
                                         }
-                                        mavenLoader.addDependencies(dep)
+                                        mavenLoader.addDependency(dep)
                                     }
                                 }
                             }
+
                         }
-                    } catch (_: Throwable){}
+                    } catch (e: Throwable){
+                        if (prop.debug) {
+                            println("[${pj.name}] read compileClasspath error")
+                            e.printStackTrace()
+                        }
+                    }
                 }
 
                 try {
                     val resolveDependency = mavenLoader.resolveDependency()
                     if (prop.debug) {
                         resolveDependency.forEach {
-                            println("${it.coordinate.toCanonicalForm()} > ${it.asFile()}")
+                            println("[$it] > ${it.file}")
                         }
                     }
                 } catch (_: Throwable){}

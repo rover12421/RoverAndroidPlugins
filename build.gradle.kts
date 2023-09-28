@@ -16,12 +16,6 @@ buildscript {
 
         val dependencyToMavenLocalVer = project.property("dependencyToMavenLocalVer")
         classpath("com.rover12421.gradle.plugins.dependencyToMavenLocal:plugin:$dependencyToMavenLocalVer")
-//        val shrinkwrap = "3.1.4"
-//        classpath("org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-spi:${shrinkwrap}")
-//        classpath("org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-spi-maven:${shrinkwrap}")
-//        classpath("org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven:${shrinkwrap}")
-//        classpath("org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-api-maven:${shrinkwrap}")
-//        classpath("org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-api:${shrinkwrap}")
     }
 }
 
