@@ -1,0 +1,22 @@
+[versions]
+agp = "8.2.0"
+kotlin = "1.9.21"
+
+
+[plugins]
+agp-lib = { id = "com.android.library", version.ref = "agp" }
+agp-app = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+
+[libraries]
+commons-codec = { module = "commons-codec:commons-codec", version = "1.16.0" }
+maven-resolver = { module = "org.apache.maven.resolver:maven-resolver-supplier", version = "1.9.16" }
+agp-gradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+asm = { module = "org.ow2.asm:asm", version = "9.5" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlin-stdlib-jdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlin" }
+kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+
+[bundles]
+kotlin-stdlib = ["kotlin-stdlib", "kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8"]

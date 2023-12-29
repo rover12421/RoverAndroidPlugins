@@ -2,7 +2,7 @@ package com.rover12421.android.plugins.namehash.core
 
 data class HashData(val len: Int,
                     val hashcode: Int,
-                    val hash: String) {
+                    val hash: Long) {
 
     companion object {
         @JvmStatic

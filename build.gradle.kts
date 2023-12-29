@@ -40,17 +40,11 @@ fun Project.extProp(propName: String): String {
     }
 }
 
-object VersionInfo {
-    const val agp: String = "7.3.1"
-    const val kotlin: String = "1.8.10"
-    const val asm = "9.5"
-    const val jvm = "1.8"
-}
-
 plugins {
-    id("com.android.application") version "8.1.1" apply false
-    id("org.jetbrains.kotlin.android") version "1.8.10" apply false
-    id("org.jetbrains.kotlin.jvm") version "1.8.10" apply false
+    alias(libs.plugins.agp.lib) apply false
+    alias(libs.plugins.agp.app) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
 }
 
 fun loadProperties(file: File, project: Project) {
@@ -114,20 +108,22 @@ subprojects {
                         }
                     }
 
-                    project.dependencies.add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, "org.ow2.asm:asm:${VersionInfo.asm}")
-                    project.dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME, "com.android.tools.build:gradle:${VersionInfo.agp}")
+                    project.dependencies.add(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME, libs.agp.gradle)
+                    project.dependencies.add(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME, libs.asm)
                 }
             }
 
+            val jvmVer = JavaVersion.VERSION_11.toString()
+
             tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
                 kotlinOptions {
-                    jvmTarget = VersionInfo.jvm
+                    jvmTarget = jvmVer
                 }
             }
 
             tasks.withType<JavaCompile>().configureEach {
-                sourceCompatibility = VersionInfo.jvm
-                targetCompatibility = VersionInfo.jvm
+                sourceCompatibility = jvmVer
+                targetCompatibility = jvmVer
             }
 
             tasks.withType<Jar>().configureEach {
@@ -152,7 +148,7 @@ subprojects {
 
             val generateJavadoc = tasks.register("generateJavadoc", Javadoc::class) {
                 source = sourceSets.getByName("main").allJava
-                setDestinationDir(file("$buildDir/docs/javadoc"))
+                setDestinationDir(file("${layout.buildDirectory}/docs/javadoc"))
             }
 
             val javadocJar = tasks.register("javadocJar", Jar::class) {

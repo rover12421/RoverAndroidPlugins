@@ -37,7 +37,7 @@ open class HashProp {
      */
     var args: MutableMap<String, Any> = mutableMapOf()
 
-    fun hash(data: String): String {
+    fun hash(data: String): Long {
         return algorithm.hash(data, args)
     }
 }

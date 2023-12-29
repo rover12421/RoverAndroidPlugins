@@ -8,5 +8,5 @@ package com.rover12421.android.plugins.namehash.core
 annotation class HashValue(
     val len: Int,
     val hashcode: Int,
-    val hash: String,
+    val hash: Long,
 )
