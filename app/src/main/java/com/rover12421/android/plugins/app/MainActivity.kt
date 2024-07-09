@@ -8,6 +8,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.rover12421.android.plugins.app.ui.theme.RoverAndroidPluginsTheme
@@ -30,22 +34,38 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
-@HashName
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    @HashName
+    @Composable
+    fun Greeting(name: String, modifier: Modifier = Modifier) {
+        var info by remember { mutableStateOf("") }
 
-@HashName("GGGGGGGGGGGGG")
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    RoverAndroidPluginsTheme {
-        Greeting("Android")
+        info += "This Class Annotation Info: \n"
+        this::class.java.annotations.forEach {
+            info += it.toString() + "\n"
+        }
+
+        info += "\n\n"
+
+        info += "GreetingPreview Annotation info: \n"
+        val method = this::class.java.methods.first { it.name == "GreetingPreview" }
+        method.annotations.forEach {
+            info += it.toString() + "\n"
+        }
+
+        Text(
+            text = info,
+            modifier = modifier
+        )
+    }
+
+    @HashName("Abcdefg")
+    @Preview(showBackground = true)
+    @Composable
+    fun GreetingPreview() {
+        RoverAndroidPluginsTheme {
+            Greeting("Android")
+        }
     }
 }
+

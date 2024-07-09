@@ -1,6 +1,13 @@
 [versions]
-agp = "8.2.0"
-kotlin = "1.9.21"
+activityCompose = "1.9.0"
+agp = "8.5.0"
+composeBom = "2024.06.00"
+coreKtxVersion = "1.13.1"
+espressoCore = "3.6.1"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+kotlin = "2.0.0"
+lifecycleRuntimeKtx = "2.8.3"
 
 
 [plugins]
@@ -8,15 +15,29 @@ agp-lib = { id = "com.android.library", version.ref = "agp" }
 agp-app = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 [libraries]
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtxVersion" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-material3 = { module = "androidx.compose.material3:material3" }
+androidx-ui = { module = "androidx.compose.ui:ui" }
+androidx-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
+androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
+androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 commons-codec = { module = "commons-codec:commons-codec", version = "1.16.0" }
+junit = { module = "junit:junit", version.ref = "junit" }
 maven-resolver = { module = "org.apache.maven.resolver:maven-resolver-supplier", version = "1.9.16" }
 agp-gradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
-asm = { module = "org.ow2.asm:asm", version = "9.5" }
+asm = { module = "org.ow2.asm:asm", version = "9.6" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
-kotlin-stdlib-jdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlin" }
-kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
 
 [bundles]
-kotlin-stdlib = ["kotlin-stdlib", "kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8"]
+compose-ui = ["androidx-ui", "androidx-ui-graphics", "androidx-ui-tooling", "androidx-ui-tooling-preview"]
+androidx-test = ["androidx-junit", "androidx-espresso-core", "androidx-ui-test-junit4", "androidx-ui-test-manifest"]

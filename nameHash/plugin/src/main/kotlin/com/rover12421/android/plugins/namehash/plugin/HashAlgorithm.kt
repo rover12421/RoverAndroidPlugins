@@ -2,22 +2,22 @@ package com.rover12421.android.plugins.namehash.plugin
 
 import org.apache.commons.codec.digest.MurmurHash3
 
-interface HashAlgorithm {
-    fun hash(data: String, param: Map<String, Any> = emptyMap()): Long
+interface HashAlgorithm<out HashType: Any> {
+    fun hash(data: String, param: Map<String, Any> = emptyMap()): HashType
 
     fun algorithmName(): String
 
     companion object {
-        val Default: HashAlgorithm = object : HashAlgorithm {
-            override fun hash(data: String, param: Map<String, Any>): Long {
-                return data.hashCode().toLong()
+        val Default: HashAlgorithm<Int> = object : HashAlgorithm<Int> {
+            override fun hash(data: String, param: Map<String, Any>): Int {
+                return data.hashCode()
             }
 
             override fun algorithmName(): String {
                 return "Default"
             }
         }
-        val MurmurHash32 = object : HashAlgorithm {
+        val MurmurHash32 = object : HashAlgorithm<Long> {
             override fun hash(data: String, param: Map<String, Any>): Long {
                 var seed = MurmurHash3.DEFAULT_SEED
                 if (param.containsKey("seed")) {

@@ -1,17 +1,15 @@
 @file:Suppress("UnstableApiUsage")
 
-import com.rover12421.android.plugins.namehash.plugin.HashAlgorithm
-
 plugins {
     alias(libs.plugins.agp.app)
     alias(libs.plugins.kotlin.android)
 
-    id("rover.android.namehash")
-    id("rover.android.removeAnnotation")
-//    id("rover.gradle.dependencyToMavenLocal")
+    id("com.rover12421.android.plugins.namehash")
+    id("com.rover12421.android.plugins.removeAnnotation")
+//    id("com.rover12421.gradle.plugins.dependencyToMavenLocal")
 }
 
-val jvmVer = JavaVersion.VERSION_11
+val jvmVer = JavaVersion.VERSION_17
 
 android {
     namespace = "com.rover12421.android.plugins.app"
@@ -64,10 +62,6 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        // https://developer.android.com/jetpack/androidx/releases/compose-kotlin
-        kotlinCompilerExtensionVersion = "1.5.7"
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -77,47 +71,19 @@ android {
     lint {
         checkReleaseBuilds = false
     }
-
-    tasks.register("publishToLocal") {
-        group = "test"
-
-        rootProject.allprojects.forEach { pj ->
-            val publishTask = pj.tasks.findByPath("publishToMavenLocal")
-            if (publishTask != null) {
-                dependsOn(publishTask)
-                mustRunAfter(publishTask)
-            }
-        }
-    }
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.activity:activity-compose:1.8.2")
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.bundles.compose.ui)
+    implementation(libs.androidx.material3)
+    androidTestImplementation(libs.bundles.androidx.test)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
 
-    implementation(libs.bundles.kotlin.stdlib)
-
-//    constraints {
-//        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.21") {
-//            because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
-//        }
-//        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.21") {
-//            because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
-//        }
-//    }
+    implementation(libs.kotlin.stdlib)
 }
 
 removeAnnotation {
@@ -129,17 +95,19 @@ removeAnnotation {
 
 nameHash {
     debug = true
-//    hash.algorithm = object: HashAlgorithm {
-//        override fun algorithmName(): String {
-//            return "Reversed"
-//        }
-//
-//        override fun hash(data: String, param: Map<String, Any>): String {
-//            return data.reversed()
-//        }
-//    }
+    allProject = true
+    filter.add("com.rover12421")
+    hash.algorithm = object: com.rover12421.android.plugins.namehash.plugin.HashAlgorithm<String> {
+        override fun algorithmName(): String {
+            return "Reversed"
+        }
 
-    hash.algorithm = HashAlgorithm.MurmurHash32
+        override fun hash(data: String, param: Map<String, Any>): String {
+            return data.reversed()
+        }
+    }
+
+//    hash.algorithm = com.rover12421.android.plugins.namehash.plugin.HashAlgorithm.MurmurHash32
 }
 
 //dependencyToMavenLocal {

@@ -30,14 +30,14 @@ open class HashProp {
     /**
      * hash 算法实现对象
      */
-    var algorithm: HashAlgorithm = HashAlgorithm.Default
+    var algorithm: HashAlgorithm<Any> = HashAlgorithm.Default
 
     /**
      * hash 算法可选参数
      */
     var args: MutableMap<String, Any> = mutableMapOf()
 
-    fun hash(data: String): Long {
+    fun hash(data: String): Any {
         return algorithm.hash(data, args)
     }
 }

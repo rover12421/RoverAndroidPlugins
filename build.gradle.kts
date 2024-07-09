@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.net.URI
 
 buildscript {
@@ -9,13 +10,13 @@ buildscript {
     }
     dependencies {
         val removeAnnotationPluginVer = project.property("removeAnnotationPluginVer")
-        classpath("com.rover12421.android.plugins.removeAnnotation:plugin:$removeAnnotationPluginVer")
+        classpath("com.rover12421.android.plugins.removeAnnotation:com.rover12421.android.plugins.removeAnnotation.gradle.plugin:$removeAnnotationPluginVer")
 
         val nameHashPluginVer = project.property("nameHashPluginVer")
-        classpath("com.rover12421.android.plugins.namehash:plugin:$nameHashPluginVer")
+        classpath("com.rover12421.android.plugins.namehash:com.rover12421.android.plugins.namehash.gradle.plugin:$nameHashPluginVer")
 
         val dependencyToMavenLocalVer = project.property("dependencyToMavenLocalVer")
-        classpath("com.rover12421.gradle.plugins.dependencyToMavenLocal:plugin:$dependencyToMavenLocalVer")
+        classpath("com.rover12421.gradle.plugins.dependencyToMavenLocal:com.rover12421.gradle.plugins.dependencyToMavenLocal.gradle.plugin:$dependencyToMavenLocalVer")
     }
 }
 
@@ -45,6 +46,7 @@ plugins {
     alias(libs.plugins.agp.app) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.compose.compiler) apply false
 }
 
 fun loadProperties(file: File, project: Project) {
@@ -72,6 +74,7 @@ subprojects {
         apply(plugin = "java-library")
     }
     afterEvaluate {
+        apply(plugin = libs.plugins.compose.compiler.get().pluginId)
         val configFile = project.file("config.properties")
         if (configFile.exists()) {
             println("project: ${project.name}")
@@ -84,8 +87,8 @@ subprojects {
             project.extSet("version", ver)
             version = ver
 
-            val groupId = project.extVal("groupId")
-            val artifactId = project.extVal("artifactId")
+            var groupId = project.extVal("groupId")
+            var artifactId = project.extVal("artifactId")
             val pluginId = project.extVal("pluginId")
             val description = project.extVal("description")
 //            println("groupId: $groupId")
@@ -97,13 +100,15 @@ subprojects {
 
             if (pluginId.isNotEmpty()) {
                 apply(plugin = "java-gradle-plugin")
+                groupId = pluginId
+                artifactId = "$groupId.gradle.plugin"
 
                 extensions.getByName<GradlePluginDevelopmentExtension>("gradlePlugin").apply {
                     isAutomatedPublishing = false
                     plugins {
                         create("roverAndroidPlugin") {
                             id = pluginId
-                            implementationClass = "$groupId.$artifactId.PluginMain"
+                            implementationClass = "$groupId.plugin.PluginMain"
                             this.description = description
                         }
                     }
@@ -113,13 +118,13 @@ subprojects {
                 }
             }
 
-            val jvmVer = JavaVersion.VERSION_11.toString()
+            val jvmVer = JavaVersion.VERSION_17.toString()
 
-            tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-                kotlinOptions {
-                    jvmTarget = jvmVer
+            tasks
+                .withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>()
+                .configureEach {
+                    compilerOptions.jvmTarget.set(JvmTarget.fromTarget(jvmVer))
                 }
-            }
 
             tasks.withType<JavaCompile>().configureEach {
                 sourceCompatibility = jvmVer
@@ -223,5 +228,16 @@ subprojects {
 
         }
     }
+}
 
+tasks.register("publishToLocal") {
+    group = "test"
+
+    rootProject.allprojects.forEach { pj ->
+        val publishTask = pj.tasks.findByPath("publishToMavenLocal")
+        if (publishTask != null) {
+            dependsOn(publishTask)
+            mustRunAfter(publishTask)
+        }
+    }
 }

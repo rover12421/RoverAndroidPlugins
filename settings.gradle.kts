@@ -20,7 +20,10 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "RoverAndroidPlugins"
-include(":app")
-include(":removeAnnotation:plugin")
-include(":nameHash:core", ":nameHash:plugin")
-include(":dependencyToMavenLocal:plugin")
+include(
+    ":app",
+    ":removeAnnotation:plugin",
+    ":nameHash:core",
+    ":nameHash:plugin",
+    ":dependencyToMavenLocal:plugin",
+)
